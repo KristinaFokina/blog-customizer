@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-
 type UseOpenCloseFormProps = {
 	isOpen: boolean;
 	setIsOpen: (value: boolean) => void;
@@ -12,22 +10,20 @@ export const useOpenCloseForm = ({
 	wrapperRef,
 }: UseOpenCloseFormProps) => {
 	function handleArrowButtonClick() {
-		setIsOpen(!isOpen);
-	}
-
-	useEffect(() => {
-		function handleOutsideClick(event: MouseEvent) {
-			const { target } = event;
-			if (target instanceof Node && !wrapperRef.current?.contains(target)) {
-				setIsOpen(false);
-			}
-		}
-
-		document.addEventListener('mousedown', handleOutsideClick);
-		return () => {
+		if (isOpen) {
+			setIsOpen(!isOpen);
 			document.removeEventListener('mousedown', handleOutsideClick);
-		};
-	}, [isOpen, setIsOpen, wrapperRef]);
+		} else {
+			setIsOpen(!isOpen);
+			document.addEventListener('mousedown', handleOutsideClick);
+		}
+	}
+	function handleOutsideClick(event: MouseEvent) {
+		const { target } = event;
+		if (target instanceof Node && !wrapperRef.current?.contains(target)) {
+			setIsOpen(false);
+		}
+	}
 
 	return handleArrowButtonClick;
 };

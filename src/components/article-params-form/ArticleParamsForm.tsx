@@ -30,8 +30,7 @@ export const ArticleParamsForm = ({
 	setParams,
 }: ArticleParamsFormProps) => {
 	const [isOpen, setIsOpen] = useState(false);
-
-	const [state, setState] = useState(params);
+	const [options, setOptions] = useState(params);
 
 	const asideClassName = clsx({
 		[styles.container]: true,
@@ -47,31 +46,31 @@ export const ArticleParamsForm = ({
 	});
 
 	function handleInputChanges(value: OptionType) {
-		if (fontFamilyOptions.includes(value)) {
-			setState({ ...state, fontFamilyOption: value });
-		}
-		if (fontColors.includes(value)) {
-			setState({ ...state, fontColor: value });
-		}
-		if (backgroundColors.includes(value)) {
-			setState({ ...state, backgroundColor: value });
-		}
-		if (contentWidthArr.includes(value)) {
-			setState({ ...state, contentWidth: value });
-		}
-		if (fontSizeOptions.includes(value)) {
-			setState({ ...state, fontSizeOption: value });
-		}
+		setOptions((prevOptions) => {
+			const newOptions = { ...prevOptions };
+			if (fontFamilyOptions.includes(value)) {
+				newOptions.fontFamilyOption = value;
+			} else if (fontColors.includes(value)) {
+				newOptions.fontColor = value;
+			} else if (backgroundColors.includes(value)) {
+				newOptions.backgroundColor = value;
+			} else if (contentWidthArr.includes(value)) {
+				newOptions.contentWidth = value;
+			} else if (fontSizeOptions.includes(value)) {
+				newOptions.fontSizeOption = value;
+			}
+			return newOptions;
+		});
 	}
 
 	const handleReset = () => {
-		setState(defaultArticleState);
+		setOptions(defaultArticleState);
 		setParams(defaultArticleState);
 	};
 
 	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		setParams(state);
+		setParams(options);
 	};
 
 	return (
@@ -86,33 +85,33 @@ export const ArticleParamsForm = ({
 						{'Задайте параметры'}
 					</Text>
 					<Select
-						selected={state.fontFamilyOption}
+						selected={options.fontFamilyOption}
 						options={fontFamilyOptions}
 						title={'Шрифт'}
 						onChange={handleInputChanges}
 					/>
 					<RadioGroup
 						name={'fontSize'}
-						selected={state.fontSizeOption}
+						selected={options.fontSizeOption}
 						options={fontSizeOptions}
 						title={'Размер шрифта'}
 						onChange={handleInputChanges}
 					/>
 					<Select
-						selected={state.fontColor}
+						selected={options.fontColor}
 						options={fontColors}
 						title={'Цвет шрифта'}
 						onChange={handleInputChanges}
 					/>
 					<Separator />
 					<Select
-						selected={state.backgroundColor}
+						selected={options.backgroundColor}
 						options={backgroundColors}
 						title={'Цвет фона'}
 						onChange={handleInputChanges}
 					/>
 					<Select
-						selected={state.contentWidth}
+						selected={options.contentWidth}
 						options={contentWidthArr}
 						title={'Ширина контента'}
 						onChange={handleInputChanges}
