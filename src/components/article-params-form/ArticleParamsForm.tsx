@@ -21,16 +21,16 @@ import styles from './ArticleParamsForm.module.scss';
 import clsx from 'clsx';
 
 type ArticleParamsFormProps = {
-	params: ArticleStateType;
-	setParams: (params: ArticleStateType) => void;
+	articleStyles: ArticleStateType;
+	setArticleStyles: (articleStyles: ArticleStateType) => void;
 };
 
 export const ArticleParamsForm = ({
-	params,
-	setParams,
+	articleStyles,
+	setArticleStyles,
 }: ArticleParamsFormProps) => {
 	const [isOpen, setIsOpen] = useState(false);
-	const [options, setOptions] = useState(params);
+	const [options, setOptions] = useState(articleStyles);
 
 	const asideClassName = clsx({
 		[styles.container]: true,
@@ -38,44 +38,35 @@ export const ArticleParamsForm = ({
 	});
 
 	const wrapperRef = useRef<HTMLDivElement | null>(null);
-
-	const handleArrowButtonClick = useOpenCloseForm({
+	useOpenCloseForm({
 		isOpen,
 		setIsOpen,
 		wrapperRef,
 	});
 
-	function handleInputChanges(value: OptionType) {
-		setOptions((prevOptions) => {
-			const newOptions = { ...prevOptions };
-			if (fontFamilyOptions.includes(value)) {
-				newOptions.fontFamilyOption = value;
-			} else if (fontColors.includes(value)) {
-				newOptions.fontColor = value;
-			} else if (backgroundColors.includes(value)) {
-				newOptions.backgroundColor = value;
-			} else if (contentWidthArr.includes(value)) {
-				newOptions.contentWidth = value;
-			} else if (fontSizeOptions.includes(value)) {
-				newOptions.fontSizeOption = value;
-			}
-			return newOptions;
-		});
-	}
+	const handleInputChanges = (key: keyof ArticleStateType) => {
+		return (value: OptionType) => {
+			setOptions((prevState) => ({ ...prevState, [key]: value }));
+		};
+	};
 
 	const handleReset = () => {
 		setOptions(defaultArticleState);
-		setParams(defaultArticleState);
+		setArticleStyles(defaultArticleState);
 	};
 
 	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		setParams(options);
+		setArticleStyles(options);
 	};
-
 	return (
 		<div ref={wrapperRef}>
-			<ArrowButton onClick={handleArrowButtonClick} isContainerOpen={isOpen} />
+			<ArrowButton
+				onClick={() => {
+					setIsOpen(!isOpen);
+				}}
+				isContainerOpen={isOpen}
+			/>
 			<aside className={asideClassName}>
 				<form
 					className={styles.form}
@@ -88,33 +79,33 @@ export const ArticleParamsForm = ({
 						selected={options.fontFamilyOption}
 						options={fontFamilyOptions}
 						title={'Шрифт'}
-						onChange={handleInputChanges}
+						onChange={handleInputChanges('fontFamilyOption')}
 					/>
 					<RadioGroup
 						name={'fontSize'}
 						selected={options.fontSizeOption}
 						options={fontSizeOptions}
 						title={'Размер шрифта'}
-						onChange={handleInputChanges}
+						onChange={handleInputChanges('fontSizeOption')}
 					/>
 					<Select
 						selected={options.fontColor}
 						options={fontColors}
 						title={'Цвет шрифта'}
-						onChange={handleInputChanges}
+						onChange={handleInputChanges('fontColor')}
 					/>
 					<Separator />
 					<Select
 						selected={options.backgroundColor}
 						options={backgroundColors}
 						title={'Цвет фона'}
-						onChange={handleInputChanges}
+						onChange={handleInputChanges('backgroundColor')}
 					/>
 					<Select
 						selected={options.contentWidth}
 						options={contentWidthArr}
 						title={'Ширина контента'}
-						onChange={handleInputChanges}
+						onChange={handleInputChanges('contentWidth')}
 					/>
 					<div className={styles.bottomContainer}>
 						<Button title='Сбросить' type='reset' />

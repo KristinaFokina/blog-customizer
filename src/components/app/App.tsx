@@ -19,7 +19,10 @@ export const App = () => {
 					'--bg-color': articleStyles.backgroundColor.value,
 				} as CSSProperties
 			}>
-			<ArticleParamsForm params={articleStyles} setParams={setArticleStyles} />
+			<ArticleParamsForm
+				articleStyles={articleStyles}
+				setArticleStyles={setArticleStyles}
+			/>
 			<Article />
 		</div>
 	);

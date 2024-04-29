@@ -1,6 +1,8 @@
+import { useCallback, useEffect } from 'react';
+
 type UseOpenCloseFormProps = {
 	isOpen: boolean;
-	setIsOpen: (value: boolean) => void;
+	setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 	wrapperRef: React.RefObject<HTMLDivElement>;
 };
 
@@ -9,21 +11,28 @@ export const useOpenCloseForm = ({
 	setIsOpen,
 	wrapperRef,
 }: UseOpenCloseFormProps) => {
-	function handleArrowButtonClick() {
+	// Обработчик клика вне компонента
+	const handleOutsideClick = useCallback(
+		(event: MouseEvent) => {
+			const { target } = event;
+			if (
+				target instanceof Node &&
+				wrapperRef.current &&
+				!wrapperRef.current.contains(target)
+			) {
+				setIsOpen(false);
+			}
+		},
+		[setIsOpen, wrapperRef]
+	);
+
+	useEffect(() => {
 		if (isOpen) {
-			setIsOpen(!isOpen);
-			document.removeEventListener('mousedown', handleOutsideClick);
-		} else {
-			setIsOpen(!isOpen);
 			document.addEventListener('mousedown', handleOutsideClick);
 		}
-	}
-	function handleOutsideClick(event: MouseEvent) {
-		const { target } = event;
-		if (target instanceof Node && !wrapperRef.current?.contains(target)) {
-			setIsOpen(false);
-		}
-	}
 
-	return handleArrowButtonClick;
+		return () => {
+			document.removeEventListener('mousedown', handleOutsideClick);
+		};
+	}, [isOpen, handleOutsideClick]);
 };
