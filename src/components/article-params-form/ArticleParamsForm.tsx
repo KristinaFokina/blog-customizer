@@ -19,7 +19,7 @@ import { useState, useRef, FormEvent } from 'react';
 
 import styles from './ArticleParamsForm.module.scss';
 import clsx from 'clsx';
-
+//дерево комитов
 type ArticleParamsFormProps = {
 	articleStyles: ArticleStateType;
 	setArticleStyles: (articleStyles: ArticleStateType) => void;
